@@ -1,0 +1,14 @@
+{
+  "name": "marvin",
+  "script": "index.js",
+  "actions": [
+    {
+      "function": "callConcierge",
+      "aliases": [":message([\\s\\S]*)"],
+      "acls": {
+        "dm": true,
+        "mention": true
+      }
+    }
+  ]
+}
