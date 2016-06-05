@@ -1,14 +1,15 @@
 {
-  "name": "marvin",
+  "name": "concierge",
   "script": "index.js",
   "actions": [
     {
       "function": "callConcierge",
-      "aliases": [":message([\\s\\S]*)"],
+      "aliases": ["help: :message([\\s\\S]*)"],
       "acls": {
         "dm": true,
         "mention": true
-      }
+      },
+      "premessage": "_Contacting concierge_"
     }
   ]
 }
