@@ -6,10 +6,37 @@
       "function": "callConcierge",
       "aliases": ["help: :message([\\s\\S]*)"],
       "acls": {
-        "dm": true,
+        "dm": false,
         "mention": true
       },
       "premessage": "_Contacting concierge_"
+    },
+    {
+      "function": "whosConcierge",
+      "aliases": ["who", "who is", "who\\'s on call"],
+      "acls": {
+        "dm": false,
+        "mention": true
+      },
+      "premessage": "_Checking_"
+    },
+    {
+      "function": "assignConcierge",
+      "aliases": ["assign: me"],
+      "acls": {
+        "dm": false,
+        "mention": true
+      },
+      "premessage": "_Assigning concierge for this channel_"
+    },
+    {
+      "function": "clearConcierge",
+      "aliases": ["stop: on-call"],
+      "acls": {
+        "dm": false,
+        "mention": true
+      },
+      "premessage": "_one moment..._"
     }
   ]
 }
