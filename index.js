@@ -1,9 +1,22 @@
-var path = require('path');
 var fs = require('fs');
 
 var conciergeFile = '/etc/concierge.json';
 
 module.exports = {
+  initialize: function(req, res) {
+    try {
+      fs.accessSync(conciergeFile, fs.F_OK);
+      return res.text('Concierge already initialize').send();
+    } catch (e) {
+      // It isn't accessible
+      try {
+        fs.writeFileSync(conciergeFile, '{}');
+        return res.text('Concierge initialized').send();
+      } catch(er) {
+        return res.text('Unable to initialize Concierge').send();
+      }
+    }
+  },
   callConcierge: function(req, res) {
     try {
       var list = fs.readFileSync(conciergeFile);
