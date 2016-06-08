@@ -13,7 +13,7 @@
     },
     {
       "function": "callConcierge",
-      "aliases": ["help: :message([\\s\\S]*)"],
+      "aliases": ["message: :message([\\s\\S]*)"],
       "acls": {
         "dm": false,
         "mention": true
