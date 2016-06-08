@@ -55,9 +55,14 @@ module.exports = {
       var list = fs.readFileSync(conciergeFile);
       list = JSON.parse(list);
 
-      list[req.channel.name] = '@' + req.from.name;
+      var name = req.params.name;
+      if (name.charAt(0) !== '@') {
+        name = '@' + name;
+      }
+
+      list[req.channel.name] = name;
       fs.writeFileSync(conciergeFile, JSON.stringify(list, null, 2));
-      return res.text('You have been assigned concierge for this channel.').send();
+      return res.text('User ' + name + ' have been assigned concierge for this channel.').send();
     } catch (e) {
       return res.text('An error has occurred while trying to assign the concierge.\n```' + JSON.stringify(e) + '```').send();
     }

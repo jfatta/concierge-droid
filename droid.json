@@ -31,7 +31,7 @@
     },
     {
       "function": "assignConcierge",
-      "aliases": ["assign: me"],
+      "aliases": ["assign: :name([^\\s]+)"],
       "acls": {
         "dm": false,
         "mention": true
