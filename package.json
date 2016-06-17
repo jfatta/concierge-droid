@@ -1,0 +1,20 @@
+{
+  "name": "concierge-droid",
+  "version": "0.0.1",
+  "description": "Concierge droid that sends direct messages to assigned persons when mentioned to avoid unnecessary noise in Slack. Useful when you have an \"on-call\" rotation in your team/channel",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/auth0/concierge-droid.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/auth0/concierge-droid/issues"
+  },
+  "homepage": "https://github.com/auth0/concierge-droid#readme"
+}
