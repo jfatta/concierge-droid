@@ -3,15 +3,6 @@
   "script": "index.js",
   "actions": [
     {
-      "function": "initialize",
-      "aliases": ["initialize"],
-      "acls": {
-        "dm": false,
-        "mention": true
-      },
-      "premessage": "_Initializing Concierge_"
-    },
-    {
       "function": "callConcierge",
       "aliases": ["message: :message([\\s\\S]*)"],
       "acls": {

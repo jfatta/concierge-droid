@@ -2,21 +2,19 @@ var fs = require('fs');
 var conciergeFile = '/etc/concierge.json';
 
 module.exports = function(context) {
+  // Initialize concierge on first run
+  try {
+    fs.accessSync(conciergeFile, fs.F_OK);
+  } catch (e) {
+    // It isn't accessible
+    try {
+      fs.writeFileSync(conciergeFile, '{}');
+    } catch(er) {
+      console.error('Unable to create concierge file');
+    }
+  }
+
   return {
-    initialize: function(req, res) {
-      try {
-        fs.accessSync(conciergeFile, fs.F_OK);
-        return res.text('Concierge already initialize').send();
-      } catch (e) {
-        // It isn't accessible
-        try {
-          fs.writeFileSync(conciergeFile, '{}');
-          return res.text('Concierge initialized').send();
-        } catch(er) {
-          return res.text('Unable to initialize Concierge').send();
-        }
-      }
-    },
     callConcierge: function(req, res) {
       try {
         var list = fs.readFileSync(conciergeFile);
@@ -30,7 +28,7 @@ module.exports = function(context) {
         var conciergeMessage = '@' + req.from.name + ' needs your attention in #' + req.channel.name + ' (' + link + ') \n\n*Message*:\n';
         res.text(conciergeMessage + req.message.value.text, list[req.channel.name]);
 
-        return res.text('A message has been sent to the concierge.').send();
+        return res.text('A message has been sent to the concierge. If your message is urgent and you don\'t receive a reply within 15 minutes, please use `@here` or `@channel`.').send();
       } catch (e) {
         return res.text('An error has occurred while trying to contact the concierge.\n```' + JSON.stringify(e) + '```').send();
       }
@@ -42,7 +40,7 @@ module.exports = function(context) {
 
         var conciergeName = list[req.channel.name];
         if (conciergeName) {
-          return res.text('The concierge for this channel is `' + conciergeName + '`').send();
+          return res.text('The concierge for this channel is `' + conciergeName + '`. To send a direct message to the concierge use `@concierge message: {text}`').send();
         }
 
         return res.text('This channel does not have a concierge assigned.').send();
