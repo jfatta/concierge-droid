@@ -1,6 +1,6 @@
 {
   "name": "concierge-droid",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Concierge droid that sends direct messages to assigned persons when mentioned to avoid unnecessary noise in Slack. Useful when you have an \"on-call\" rotation in your team/channel",
   "main": "index.js",
   "scripts": {
