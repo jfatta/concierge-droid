@@ -3,6 +3,14 @@
   "script": "index.js",
   "actions": [
     {
+      "function": "help",
+      "aliases": ["help"],
+      "acls": {
+        "dm": false,
+        "mention": true
+      }
+    },
+    {
       "function": "callConcierge",
       "aliases": ["message: :message([\\s\\S]*)"],
       "acls": {
