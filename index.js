@@ -80,6 +80,10 @@ module.exports = function(context) {
       } catch (e) {
         return res.text('An error has occurred while trying to unassign the concierge.\n```' + JSON.stringify(e) + '```').send();
       }
+    },
+    help: function(req, res) {
+      var helpMessage = "Here\'s what I can do:\n- Use `@concierge who` to check who is the assigned concierge for this channel.\n- Use `@concierge assign: {user}` to assign a person to the current channel.\n- Use `concierge message: {text}` to send a direct message to the concierge.\n- Use `concierge stop: on-call` to clear the assignment for this channel.";
+      return res.text(helpMessage).send();
     }
   };
 };
