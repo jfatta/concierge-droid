@@ -12,7 +12,7 @@
     },
     {
       "function": "callConcierge",
-      "aliases": ["message: :message([\\s\\S]*)"],
+      "aliases": ["message: :message([\\s\\S]*)", "message :message([\\s\\S]*)" ],
       "acls": {
         "dm": false,
         "mention": true
@@ -21,7 +21,7 @@
     },
     {
       "function": "whosConcierge",
-      "aliases": ["who", "who is", "who\\'s on call"],
+      "aliases": ["who", "who is", "who\\'s on call", "who?"],
       "acls": {
         "dm": false,
         "mention": true
@@ -30,7 +30,7 @@
     },
     {
       "function": "assignConcierge",
-      "aliases": ["assign: :name([^\\s]+)"],
+      "aliases": ["assign: :name([^\\s]+)", "assign :name([^\\s]+)"],
       "acls": {
         "dm": false,
         "mention": true
@@ -39,7 +39,7 @@
     },
     {
       "function": "clearConcierge",
-      "aliases": ["stop: on-call"],
+      "aliases": ["stop: on-call", "stop on-call"],
       "acls": {
         "dm": false,
         "mention": true
