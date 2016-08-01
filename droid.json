@@ -21,7 +21,7 @@
     },
     {
       "function": "whosConcierge",
-      "aliases": ["who", "who is", "who\\'s on call", "who?"],
+      "aliases": ["who", "who is", "who\\'s on call", "who\\?"],
       "acls": {
         "dm": false,
         "mention": true
