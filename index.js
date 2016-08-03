@@ -1,5 +1,6 @@
 var fs = require('fs');
-var conciergeFile = '/etc/concierge.json';
+var dirname = require('path').dirname;
+var conciergeFile = dirname(__dirname) + '/concierge.json';
 
 module.exports = function(context) {
   // Initialize concierge on first run
