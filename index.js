@@ -22,7 +22,7 @@ module.exports = function(context) {
         list = JSON.parse(list);
 
         if (!list[req.channel.name]) {
-          return res.text('No concierge assigned for this channel. \n' + JSON.stringify(req.channel)).send();
+          return res.text('No concierge assigned for this channel. Use `@concierge assign @user').send();
         }
 
         var link = 'https://auth0.slack.com/archives/' + req.channel.name + '/p' + req.message.timestamp.replace('.', '');
