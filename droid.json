@@ -11,15 +11,6 @@
       }
     },
     {
-      "function": "callConcierge",
-      "aliases": [":message([\\s\\S]*)", "message: :message([\\s\\S]*)", "message :message([\\s\\S]*)" ],
-      "acls": {
-        "dm": false,
-        "explicitMention": true
-      },
-      "premessage": "_Contacting concierge_"
-    },
-    {
       "function": "whosConcierge",
       "aliases": ["who", "who is", "who\\'s on call", "who\\?"],
       "acls": {
@@ -45,6 +36,15 @@
         "mention": true
       },
       "premessage": "_one moment..._"
+    },
+    {
+      "function": "callConcierge",
+      "aliases": [":message([\\s\\S]*)", "message: :message([\\s\\S]*)", "message :message([\\s\\S]*)" ],
+      "acls": {
+        "dm": false,
+        "explicitMention": true
+      },
+      "premessage": "_Contacting concierge_"
     }
   ]
 }
