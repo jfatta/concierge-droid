@@ -12,10 +12,10 @@
     },
     {
       "function": "callConcierge",
-      "aliases": ["message: :message([\\s\\S]*)", "message :message([\\s\\S]*)" ],
+      "aliases": [":message([\\s\\S]*)", "message: :message([\\s\\S]*)", "message :message([\\s\\S]*)" ],
       "acls": {
         "dm": false,
-        "mention": true
+        "explicitMention": true
       },
       "premessage": "_Contacting concierge_"
     },
