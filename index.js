@@ -29,7 +29,7 @@ module.exports = function(context) {
         var conciergeMessage = '@' + req.from.name + ' needs your attention in #' + req.channel.name + ' (' + link + ') \n\n*Message*:\n';
         res.text(conciergeMessage + req.message.value.text, list[req.channel.name]);
 
-        return res.text('A message has been sent to the concierge. If your message is urgent and you don\'t receive a reply within 15 minutes, please use `@here` or `@channel`.').send();
+        return res.text('A message has been sent to the concierge (`' + list[req.channel.name] + '`). If your message is urgent and you don\'t receive a reply within 15 minutes, please use `@here` or `@channel`.').send();
       } catch (e) {
         return res.text('An error has occurred while trying to contact the concierge.\n```' + JSON.stringify(e) + '```').send();
       }
