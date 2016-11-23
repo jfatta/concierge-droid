@@ -1,8 +1,12 @@
+var agent = require('auth0-instrumentation');
 var fs = require('fs');
 var dirname = require('path').dirname;
 var conciergeFile = dirname(__dirname) + '/concierge.json';
 
 module.exports = function(context) {
+  var env = { METRICS_API_KEY: context.config.METRICS_API_KEY, METRICS_PREFIX: 'auth0' };
+  agent.init(null, env);
+
   // Initialize concierge on first run
   try {
     fs.accessSync(conciergeFile, fs.F_OK);
@@ -21,6 +25,7 @@ module.exports = function(context) {
         var list = fs.readFileSync(conciergeFile);
         list = JSON.parse(list);
 
+        agent.metrics.increment('concierge.messages', { from: req.from.name, channel: req.channel.name, concierge: list[req.channel.name] || 'unassigned'});
         if (!list[req.channel.name]) {
           return res.text('No concierge assigned for this channel. Use `@concierge assign @user`').send();
         }
