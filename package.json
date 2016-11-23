@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/auth0/concierge-droid/issues"
   },
-  "homepage": "https://github.com/auth0/concierge-droid#readme"
+  "homepage": "https://github.com/auth0/concierge-droid#readme",
+  "dependencies": {
+    "auth0-instrumentation": "auth0/auth0-instrumentation#v2.1.0"
+  }
 }
