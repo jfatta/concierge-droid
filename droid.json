@@ -21,7 +21,10 @@
     },
     {
       "function": "assignConcierge",
-      "aliases": ["assign: :name([^\\s]+)", "assign :name([^\\s]+)"],
+      "aliases": [
+        "Reminder: assign :name([^\\s]+).",
+        "assign: :name([^\\s]+)", "assign :name([^\\s]+)"
+      ],
       "acls": {
         "dm": false,
         "mention": true
