@@ -31,7 +31,7 @@ module.exports = function(context) {
           return res.text('No concierge assigned for this channel. Use `@concierge assign @user`').send();
         }
 
-        var inChannelMatch = list[req.channel.name].match(/^in_channel (@[^\s]+)/);
+        var inChannelMatch = list[req.channel.name].match(/^in_channel ([^\s]+)/);
 
         if (inChannelMatch) {
           return res.text(inChannelMatch[1] + ' :point_up:').send();
@@ -68,17 +68,20 @@ module.exports = function(context) {
         list = JSON.parse(list);
 
         var name = req.params.name;
-        if (name.charAt(0) !== '@') {
-          name = '@' + name;
+        if (name.charAt(0) === '@') {
+          name = name.slice(1);
         }
 
         // req.param.name looks like @user-group(subteam.^S1AB2C34D) when using a Slack user-group
         // We're just pulling the handle out to ping the user-group
-        var subteamMatch = name.match(/(@[^\s+]*)\(subteam\^.*\)/);
-        if (subteamMatch) {
-          name = subteamMatch[1];
+        var subteamMatch = name.match(/([^\s+]*)\((subteam\^.+)\)/);
+        if (!subteamMatch) {
+          return res.text('`in_channel` mode is only supported for subteams.').send();
         }
 
+        // https://api.slack.com/docs/message-formatting#variables
+        // Needs to look like <!subteam^ID|handle>
+        name = '<!' + subteamMatch[2] + '|' + subteamMatch[1] + '>';
         list[req.channel.name] = 'in_channel ' + name;
         fs.writeFileSync(conciergeFile, JSON.stringify(list, null, 2));
         return res.text('Handle ' + name + ' has been assigned concierge for this channel.').send();
