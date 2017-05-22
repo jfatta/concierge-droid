@@ -1,4 +1,5 @@
 var agent = require('auth0-instrumentation');
+var slackApiClient = require('./lib/slack-api-client');
 var pkg = require('./package.json');
 var fs = require('fs');
 var dirname = require('path').dirname;
@@ -20,6 +21,8 @@ module.exports = function(context) {
     }
   }
 
+  var apiClient = slackApiClient.init(context.config.SLACK_API_TOKEN);
+
   return {
     callConcierge: function(req, res) {
       try {
@@ -37,11 +40,19 @@ module.exports = function(context) {
           return res.text(inChannelMatch[1] + ' :point_up:').send();
         }
         else {
-          var link = 'https://auth0.slack.com/archives/' + req.channel.name + '/p' + req.message.timestamp.replace('.', '');
-          var conciergeMessage = '@' + req.from.name + ' needs your attention in #' + req.channel.name + ' (' + link + ') \n\n*Message*:\n';
-          res.text(conciergeMessage + req.message.value.text, list[req.channel.name]);
-
-          return res.text('A message has been sent to the concierge (`' + list[req.channel.name] + '`). If your message is urgent and you don\'t receive a reply within 15 minutes, please use `@here` or `@channel`.').send();
+          var conciergeName = list[req.channel.name];
+          apiClient.getUserPresence(conciergeName, (err, isActive) => {
+            if(err) agent.logger.error("Error while getting user presence", { err });
+            if (err || isActive) {
+              var link = 'https://auth0.slack.com/archives/' + req.channel.name + '/p' + req.message.timestamp.replace('.', '');
+              var conciergeMessage = '@' + req.from.name + ' needs your attention in #' + req.channel.name + ' (' + link + ') \n\n*Message*:\n';
+              res.text(conciergeMessage + req.message.value.text, list[req.channel.name]);
+              return res.text('A message has been sent to the concierge (`' + conciergeName + '`). If your message is urgent and you don\'t receive a reply within 15 minutes, please use `@here` or `@channel`.').send();
+            } else {
+              var sanitizedConciergeName = conciergeName.replace('o', '0').replace('a', '4').replace('e', '3');
+              return res.text("Hey, it appears that the concierge is offline right now. If this is *really* urgent, please contact `@" + sanitizedConciergeName + "@ directly or use `@here` or `@channel`.").send();
+            }
+          });
         }
       } catch (e) {
         return res.text('An error has occurred while trying to contact the concierge.\n```' + JSON.stringify(e) + '```').send();
@@ -134,3 +145,4 @@ module.exports = function(context) {
     }
   };
 };
+
