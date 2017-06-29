@@ -95,9 +95,6 @@ module.exports = function(context) {
         list = JSON.parse(list);
 
         var name = req.params.name;
-        if (name.charAt(0) !== '@') {
-          name = '@' + name;
-        }
 
         // We can't DM subteams, so there's no point in allowing this
         var subteamMatch = name.match(/(@[^\s+]*)\(subteam\^.*\)/);
