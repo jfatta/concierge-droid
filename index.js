@@ -20,18 +20,36 @@ module.exports = function(context) {
     }
   }
 
+  function getConcierge(channelName, channelList) {
+    if (!channelList) {
+      channelList = fs.readFileSync(conciergeFile);
+      channelList = JSON.parse(channelList);
+    }
+
+    var concierge = channelList[channelName];
+
+    // For backward compatibility
+    if (concierge && typeof concierge !== 'object') {
+      concierge = {
+        name: concierge
+      };
+    }
+
+    return concierge;
+  }
+
   return {
     callConcierge: function(req, res) {
       try {
-        var list = fs.readFileSync(conciergeFile);
-        list = JSON.parse(list);
+        var concierge = getConcierge(req.channel.name);
 
-        agent.metrics.increment('concierge.messages', 1, { from: req.from.name, channel: req.channel.name, concierge: list[req.channel.name] || 'unassigned'});
-        if (!list[req.channel.name]) {
+        agent.metrics.increment('concierge.messages', 1, { from: req.from.name, channel: req.channel.name, concierge: concierge && concierge.name || 'unassigned'});
+        if (!concierge) {
           return res.text('No concierge assigned for this channel. Use `@concierge assign @user`').send();
         }
 
-        var inChannelMatch = list[req.channel.name].match(/^in_channel ([^\s]+)/);
+
+        var inChannelMatch = concierge.name.match(/^in_channel ([^\s]+)/);
 
         if (inChannelMatch) {
           return res.text(inChannelMatch[1] + ' :point_up:').send();
@@ -39,9 +57,10 @@ module.exports = function(context) {
         else {
           var link = 'https://auth0.slack.com/archives/' + req.channel.name + '/p' + req.message.timestamp.replace('.', '');
           var conciergeMessage = '@' + req.from.name + ' needs your attention in #' + req.channel.name + ' (' + link + ') \n\n*Message*:\n';
-          res.text(conciergeMessage + req.message.value.text, list[req.channel.name]);
+          res.text(conciergeMessage + req.message.value.text, concierge.name);
 
-          return res.text('A message has been sent to the concierge (`' + list[req.channel.name] + '`). If your message is urgent and you don\'t receive a reply within 15 minutes, please use `@here` or `@channel`.').send();
+          var defaultWelcomeMessage = 'A message has been sent to the concierge (`' + concierge.name + '`). If your message is urgent and you don\'t receive a reply within 15 minutes, please use `@here` or `@channel`.';
+          return res.text(concierge.welcomeMessage || defaultWelcomeMessage).send();
         }
       } catch (e) {
         return res.text('An error has occurred while trying to contact the concierge.\n```' + JSON.stringify(e) + '```').send();
@@ -49,12 +68,9 @@ module.exports = function(context) {
     },
     whosConcierge: function(req, res) {
       try {
-        var list = fs.readFileSync(conciergeFile);
-        list = JSON.parse(list);
-
-        var conciergeName = list[req.channel.name];
-        if (conciergeName) {
-          return res.text('The concierge for this channel is `' + conciergeName + '`. To send a direct message to the concierge use `@concierge message: {text}`').send();
+        var concierge = getConcierge(req.channel.name);
+        if (concierge) {
+          return res.text('The concierge for this channel is `' + concierge.name + '`. To send a direct message to the concierge use `@concierge message: {text}`').send();
         }
 
         return res.text('This channel does not have a concierge assigned.').send();
@@ -82,7 +98,11 @@ module.exports = function(context) {
         // https://api.slack.com/docs/message-formatting#variables
         // Needs to look like <!subteam^ID|handle>
         name = '<!' + subteamMatch[2] + '|' + subteamMatch[1] + '>';
-        list[req.channel.name] = 'in_channel ' + name;
+
+        var concierge = getConcierge(req.channel.name, list) || {};
+        concierge.name = 'in_channel ' + name
+        list[req.channel.name] = concierge;
+
         fs.writeFileSync(conciergeFile, JSON.stringify(list, null, 2));
         return res.text('Handle ' + name + ' has been assigned concierge for this channel.').send();
       } catch (e) {
@@ -105,7 +125,10 @@ module.exports = function(context) {
           return res.text('Cannot assign a subteam as concierge. Try using `@concierge in_channel: ' + subteamMatch[1] + '` instead.').send();
         }
 
-        list[req.channel.name] = name;
+        var concierge = getConcierge(req.channel.name, list) || {};
+        concierge.name = name
+        list[req.channel.name] = concierge;
+
         fs.writeFileSync(conciergeFile, JSON.stringify(list, null, 2));
         return res.text('User ' + name + ' has been assigned concierge for this channel.').send();
       } catch (e) {
@@ -128,8 +151,27 @@ module.exports = function(context) {
         return res.text('An error has occurred while trying to unassign the concierge.\n```' + JSON.stringify(e) + '```').send();
       }
     },
+    setWelcomeMessage: function(req, res) {
+      try {
+        var list = fs.readFileSync(conciergeFile);
+        list = JSON.parse(list);
+
+        var concierge = getConcierge(req.channel.name, list);
+        if (!concierge) {
+          return res.text('This channel does not have a concierge assigned. Nothing changed.').send();
+        }
+
+        concierge.welcomeMessage = req.params.message || concierge.welcomeMessage;
+        list[req.channel.name] = concierge;
+
+        fs.writeFileSync(conciergeFile, JSON.stringify(list, null, 2));
+        return res.text('Message saved for concierge for this channel.').send();
+      } catch (e) {
+        return res.text('An error has occurred while trying to set welcome message for the concierge.\n```' + JSON.stringify(e) + '```').send();
+      }
+    },
     help: function(req, res) {
-      var helpMessage = "Here\'s what I can do:\n- Use `@concierge who` to check who is the assigned concierge for this channel.\n- Use `@concierge assign: {user}` to assign a person to the current channel (user will be notified by DM).\n- Use `concierge in_channel: {subteam}` to assign a user group as the concierge (that will be notified in the channel itself).\n- Use `concierge message: {text}` to send a direct message to the concierge.\n- Use `concierge stop: on-call` to clear the assignment for this channel.";
+      var helpMessage = "Here\'s what I can do:\n- Use `@concierge who` to check who is the assigned concierge for this channel.\n- Use `@concierge assign: {user}` to assign a person to the current channel (user will be notified by DM).\n- Use `concierge in_channel: {subteam}` to assign a user group as the concierge (that will be notified in the channel itself).\n- Use `concierge message: {text}` to send a direct message to the concierge.\n- Use `@concierge set welcome message: {message}` to define a message to be shown to the caller.\n- Use `concierge stop: on-call` to clear the assignment for this channel.";
       return res.text(helpMessage).send();
     }
   };
