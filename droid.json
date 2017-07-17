@@ -43,6 +43,17 @@
       "premessage": "_Assigning concierge for this channel_"
     },
     {
+      "function": "setWelcomeMessage",
+      "aliases": [
+        "set welcome message:?\\s:message([\\s\\S]*)"
+      ],
+      "acls": {
+        "dm": false,
+        "mention": true
+      },
+      "premessage": "_Setting welcome message for concierge for this channel_"
+    },
+    {
       "function": "clearConcierge",
       "aliases": ["stop: on-call", "stop on-call"],
       "acls": {
