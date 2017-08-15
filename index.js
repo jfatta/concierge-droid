@@ -5,6 +5,7 @@ var dirname = require('path').dirname;
 var conciergeFile = dirname(__dirname) + '/concierge.json';
 
 module.exports = function(context) {
+  context.config = context.config || {};
   var env = { METRICS_API_KEY: context.config.METRICS_API_KEY, METRICS_PREFIX: 'auth0' };
   agent.init(pkg, env);
 
