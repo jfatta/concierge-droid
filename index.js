@@ -272,7 +272,7 @@ module.exports = function(context) {
       if (!keyValue) {
         res.text(`Value not found for the key: "${req.params.key}".`).send();
       } else {
-        res.text(`The "${req.params.key}" value is: "${value}".`).send();
+        res.text(`The "${req.params.key}" value is: "${keyValue}".`).send();
       }
     }
   };
