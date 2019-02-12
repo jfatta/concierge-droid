@@ -3,6 +3,13 @@
   "script": "index.js",
   "actions": [
     {
+      "function": "echo",
+      "aliases": ["echo :key([^\\s]+)"],
+      "acls": {
+        "mention": true
+      }
+    },
+    {
       "function": "help",
       "aliases": ["help"],
       "acls": {
@@ -21,9 +28,7 @@
     },
     {
       "function": "assignInChannel",
-      "aliases": [
-        "in_channel: :name([^\\s]+)", "in_channel :name([^\\s]+)"
-      ],
+      "aliases": ["in_channel: :name([^\\s]+)", "in_channel :name([^\\s]+)"],
       "acls": {
         "dm": false,
         "mention": true
@@ -34,7 +39,8 @@
       "function": "assignConcierge",
       "aliases": [
         "Reminder: assign :name([^\\s]+).",
-        "assign: :name([^\\s]+)", "assign :name([^\\s]+)"
+        "assign: :name([^\\s]+)",
+        "assign :name([^\\s]+)"
       ],
       "acls": {
         "dm": false,
@@ -44,9 +50,7 @@
     },
     {
       "function": "setWelcomeMessage",
-      "aliases": [
-        "set welcome message:?\\s:message([\\s\\S]*)"
-      ],
+      "aliases": ["set welcome message:?\\s:message([\\s\\S]*)"],
       "acls": {
         "dm": false,
         "mention": true
@@ -64,7 +68,11 @@
     },
     {
       "function": "callConcierge",
-      "aliases": [":message([\\s\\S]*)", "message: :message([\\s\\S]*)", "message :message([\\s\\S]*)" ],
+      "aliases": [
+        ":message([\\s\\S]*)",
+        "message: :message([\\s\\S]*)",
+        "message :message([\\s\\S]*)"
+      ],
       "acls": {
         "dm": false,
         "explicitMention": true
